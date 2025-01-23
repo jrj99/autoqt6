@@ -2,19 +2,21 @@
 from functools import partial
 
 try:
-    from PySide2.QtCore import QObject, Property
-    USING = 'PySide2'
+    from PySide6.QtCore import QObject, Property
+
+    USING = "PySide6"
 except Exception:
-    from PyQt5.QtCore import QObject, pyqtProperty as Property
-    USING = 'PyQt5'
+    from PyQt6.QtCore import QObject, pyqtProperty as Property
+
+    USING = "PyQt6"
 
 
-VERSION = '0.0.6'
+VERSION = "0.0.7"
 
 
 def getdeepr(obj, name):
     """Function to get deeper attributes, replaces getattr."""
-    names = name.split('.')
+    names = name.split(".")
     for name in names[:-1]:
         obj = getattr(obj, name)
     return getattr(obj, names[-1])
@@ -22,7 +24,7 @@ def getdeepr(obj, name):
 
 def setdeepr(obj, name, value):
     """Function to set deeper attributes, replaces setattr."""
-    names = name.split('.')
+    names = name.split(".")
     for name in names[:-1]:
         obj = getattr(obj, name)
     return setattr(obj, names[-1], value)
@@ -36,7 +38,7 @@ def _getter(self, attr):
 def _setter(self, value, attr, sig, typ):
     """Template for AutoProp fset function."""
     if not isinstance(typ, str) and not isinstance(value, typ):
-        raise TypeError('{} is not {}'.format(repr(value), typ))
+        raise TypeError("{} is not {}".format(repr(value), typ))
     if getdeepr(self, attr) != value:
         setdeepr(self, attr, value)
         getdeepr(self, sig).emit()
@@ -47,21 +49,21 @@ class AutoProp:
     Automatic property for AutoObject
     Generates fget and fset functions to simplify basic property access.
 
-    Use in place of pyqtProperty or Property when you just need to read/write
+    Use in place of Property or Property when you just need to read/write
     an instance attribute without doing anything special.
 
     You can use the @propName.getter and setter decorators just like you would
     with a Python or Qt property to override them if you need to.
 
-    fget and fset arguments work the same as on pyqtProperty/Property as well.
+    fget and fset arguments work the same as on Property/Property as well.
 
     The attr argument can also contain a kind of 'object path' with
     levels/layers separated by dots. For example: attr='thing.other.stuff'
     will getattr down through the 'thing' and 'other' objects to return the
     value of 'stuff'.
     """
-    def __init__(self, type_signature, signal_name, attr=None, write=False,
-                 fget=None, fset=None):
+
+    def __init__(self, type_signature, signal_name, attr=None, write=False, fget=None, fset=None):
         self.type_signature = type_signature
         self.signal_name = signal_name
         self.attr = attr
@@ -96,6 +98,7 @@ class AutoObject(QObject):
     A wrapper for QObject that uses the Python 3.6 __init_subclass__ method to
     convert all AutoProp attributes into Qt properties.
     """
+
     def __init_subclass__(cls, *args, **kwargs):
         super().__init_subclass__(**kwargs)
         # transform AutoProp instances into Qt properties
@@ -106,11 +109,9 @@ class AutoObject(QObject):
                 continue
             if not isinstance(prop, AutoProp):
                 continue
-            prop_kwargs = {'notify': getdeepr(cls, prop.signal_name)}
+            prop_kwargs = {"notify": getdeepr(cls, prop.signal_name)}
             if prop.fget:
-                prop_kwargs['fget'] = prop.fget
+                prop_kwargs["fget"] = prop.fget
             if prop.writable:
-                prop_kwargs['fset'] = prop.fset
-            setattr(
-                cls, attr, Property(prop.type_signature, **prop_kwargs)
-            )
+                prop_kwargs["fset"] = prop.fset
+            setattr(cls, attr, Property(prop.type_signature, **prop_kwargs))

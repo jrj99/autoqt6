@@ -3,8 +3,8 @@ from unittest import mock
 import sys
 import unittest
 
-from PySide2.QtCore import Signal
-from PyQt5.QtCore import pyqtSignal
+from PySide6.QtCore import Signal
+from PyQt6.QtCore import pyqtSignal
 
 import autoqt
 
@@ -199,31 +199,31 @@ class TestAutoQt:
 
 class TestPyQt(unittest.TestCase, TestAutoQt):
     def setUp(self):
-        # start pre-empting PySide2 imports
-        sys.modules['PySide2.QtCore'] = None
+        # start pre-empting PySide6 imports
+        sys.modules['PySide6.QtCore'] = None
         reload(autoqt)
         self.sig = pyqtSignal
 
     def tearDown(self):
-        # stop pre-empting PySide2 imports
-        sys.modules.pop('PySide2.QtCore')
+        # stop pre-empting PySide6 imports
+        sys.modules.pop('PySide6.QtCore')
 
     def test_uses_pyqt(self):
-        """autoqt should be using PyQt5"""
-        self.assertEqual(autoqt.USING, 'PyQt5')
+        """autoqt should be using PyQt6"""
+        self.assertEqual(autoqt.USING, 'PyQt6')
 
 
 class TestPySide(unittest.TestCase, TestAutoQt):
     def setUp(self):
         # start pre-empting PyQt5 imports
-        sys.modules['PyQt5.QtCore'] = None
+        sys.modules['PyQt6.QtCore'] = None
         reload(autoqt)
         self.sig = Signal
 
     def tearDown(self):
-        # stop pre-empting PyQt5 imports
-        sys.modules.pop('PyQt5.QtCore')
+        # stop pre-empting PyQt6 imports
+        sys.modules.pop('PyQt6.QtCore')
 
     def test_uses_pyqt(self):
-        """autoqt should be using PySide2"""
-        self.assertEqual(autoqt.USING, 'PySide2')
+        """autoqt should be using PySide6"""
+        self.assertEqual(autoqt.USING, 'PySide6')

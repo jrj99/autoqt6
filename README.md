@@ -10,8 +10,8 @@ few special setters or state modifying slots.
 
 Example:
 ```
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-from autoqt import AutoObject, AutoProp
+from PyQt6.QtCore import pyqtSignal, pyqtSlot
+from autoqt6 import AutoObject, AutoProp
 
 
 class SomeObject(AutoObject):
