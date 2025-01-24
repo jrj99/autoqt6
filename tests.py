@@ -6,7 +6,7 @@ import unittest
 from PySide6.QtCore import Signal
 from PyQt6.QtCore import pyqtSignal
 
-import autoqt
+import autoqt6 as autoqt
 
 
 class TestAutoQt:
