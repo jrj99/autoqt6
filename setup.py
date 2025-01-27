@@ -1,7 +1,7 @@
 # -*- coding: utf_8 -*-
 from setuptools import setup
 
-from autoqt import VERSION
+from autoqt6 import VERSION
 
 
 with open('README.md', 'r') as f:
